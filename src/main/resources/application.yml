@@ -1,0 +1,17 @@
+server:
+  port: 8088
+
+logging:
+  config: classpath:log4j2.yml
+  level:
+    org.springframework.web: info
+
+spring:
+  aop:
+    auto: true
+    proxy-target-class: true
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3308/grrs?characterEncoding=utf-8&useSSL=true&autoReconnect=true&createDatabaseIfNotExist=true
+    username: root
+    password: 123456

@@ -1,0 +1,111 @@
+Configuration:
+  status: warn
+  monitorInterval: 30
+
+  Properties:
+    Property:
+      - name: log.path
+        value: logs
+      - name: project.name
+        value: grrsbic
+      - name: log.pattern
+        value: "%d{yyyy-MM-dd HH:mm:ss.SSS} -%5p ${PID:-} [%15.15t] %-30.30C{1.} : %m%n"
+      - name: log.lifecycle
+        value: 30
+
+  Appenders:
+    Console:
+      name: CONSOLE
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: ${log.pattern}
+
+    RollingFile:
+      - name: ROLLING_FILE
+        fileName: ${log.path}/${project.name}.log
+        filePattern: "${log.path}//${project.name}-%d{yyyy-MM-dd}-%i.log.gz"
+        PatternLayout:
+          pattern: ${log.pattern}
+        Filters:
+          ThresholdFilter:
+            - level: error
+              onMatch: DENY
+              onMismatch: NEUTRAL
+            - level: info
+              onMatch: ACCEPT
+              onMismatch: DENY
+        Policies:
+          TimeBasedTriggeringPolicy:  # 按天分类
+            modulate: true
+            interval: 1
+        DefaultRolloverStrategy:
+          max: ${log.lifecycle}
+      - name: PLATFORM_ROLLING_FILE
+        ignoreExceptions: false
+        fileName: ${log.path}/${project.name}_platform.log
+        filePattern: "${log.path}/${project.name}_platform-%d{yyyy-MM-dd}-%i.log.gz"
+        PatternLayout:
+          pattern: ${log.pattern}
+        Policies:
+          TimeBasedTriggeringPolicy:  # 按天分类
+            modulate: true
+            interval: 1
+        DefaultRolloverStrategy:
+          max: ${log.lifecycle}
+      - name: ERROR_ROLLING_FILE
+        ignoreExceptions: false
+        fileName: ${log.path}/${project.name}_error.log
+        filePattern: "${log.path}/${project.name}_error-%d{yyyy-MM-dd}-%i.log.gz"
+        ThresholdFilter:
+          level: error
+          onMatch: ACCEPT
+          onMismatch: DENY
+        PatternLayout:
+          pattern: ${log.pattern}
+        Policies:
+          TimeBasedTriggeringPolicy:  # 按天分类
+            modulate: true
+            interval: 1
+        DefaultRolloverStrategy:
+          max: ${log.lifecycle}
+      - name: DB_ROLLING_FILE
+        ignoreExceptions: false
+        fileName: ${log.path}/${project.name}_db.log
+        filePattern: "${log.path}/${project.name}_db-%d{yyyy-MM-dd}-%i.log.gz"
+        PatternLayout:
+          pattern: ${log.pattern}
+        Policies:
+          TimeBasedTriggeringPolicy:  # 按天分类
+            modulate: true
+            interval: 1
+        DefaultRolloverStrategy:
+          max: ${log.lifecycle}
+
+
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+        - ref: CONSOLE
+        - ref: ROLLING_FILE
+        - ref: ERROR_ROLLING_FILE
+
+    Logger:
+      - name: PLATFORM
+        level: info
+        additivity: false
+        AppenderRef:
+          - ref: CONSOLE
+          - ref: PLATFORM_ROLLING_FILE
+
+      - name: ERROR
+        level: debug
+        additivity: true
+        AppenderRef:
+          - ref: ERROR_ROLLING_FILE
+
+      - name: DB
+        level: info
+        additivity: false
+        AppenderRef:
+          - ref: DB_ROLLING_FILE
