@@ -105,7 +105,7 @@ Configuration:
           - ref: ERROR_ROLLING_FILE
 
       - name: DB
-        level: info
+        level: warn
         additivity: false
         AppenderRef:
           - ref: DB_ROLLING_FILE

@@ -1,101 +1,75 @@
 package org.bdilab.grrs.bic.service;
 
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.annotations.*;
+import org.apache.logging.log4j.LogManager;
 import org.bdilab.grrs.bic.entity.User;
 import org.bdilab.grrs.bic.entity.UserInfo;
+import org.bdilab.grrs.bic.param.LoggerName;
 import org.bdilab.grrs.bic.repository.UserRepository;
-import org.bdilab.grrs.bic.service.result.ResponseResult;
-import org.bdilab.grrs.bic.service.result.ResponseResultUtil;
+import org.bdilab.grrs.bic.service.util.ResponseResultUtil;
+import org.bdilab.grrs.bic.service.util.UserUtil;
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.SessionAttribute;
-
-import javax.validation.constraints.NotBlank;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 /**
+ * 用户接口
  * @author caytng@163.com
  * @date 2019/4/10
  */
+@Api(description = "用户接口")
 @RestController
 public class UserController {
 
     @Autowired
-    UserRepository userRepository;
+    UserRepository repository;
 
-    @RequestMapping("/login")
-    public ResponseResult<User> login(@NotBlank String userName, @NotBlank String userPswd) {
-        UserInfo info = userRepository.findByUserName(userName);
-        if (info == null || StringUtils.isBlank(info.getUserName())
-                || StringUtils.isBlank(info.getUserPswd())) {
-            return ResponseResultUtil.buildFailedResult("用户不存在");
+    @ApiOperation(value = "用户登录")
+    @RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity login(@RequestBody UserInfo userInfo) {
+        if (UserUtil.isIllegalInfo(userInfo)) {
+            return ResponseResultUtil.wrongParameters();
         }
-        if (userPswd.equals(info.getUserPswd())) {
+        User user = repository.findByUserName(userInfo.getUserName());
+        if (UserUtil.isIllegalInfo(user)) {
+            return ResponseResultUtil.failure("用户不存在");
+        }
+        if (UserUtil.matchPswd(userInfo.getUserPswd(), user.getUserPswd())) {
             // 脱敏
-            desensitize(info);
-            return ResponseResultUtil.buildSuccessfulResult(info);
+            UserUtil.desensitize(userInfo);
+            return ResponseResultUtil.success(userInfo);
         }
-        return ResponseResultUtil.buildFailedResult("密码错误");
+        return ResponseResultUtil.failure("密码错误");
     }
 
-    @RequestMapping("/user/modifyPswd")
-    public ResponseResult<Boolean> modifySelfPswd(@SessionAttribute UserInfo curUser, @NotBlank String oldPswd, @NotBlank String newPswd) {
+    @ApiOperation(value = "用户修改密码")
+    @RequestMapping(value = "/user/modifyPswd", method = RequestMethod.POST)
+    public ResponseEntity modifySelfPswd(@SessionAttribute UserInfo curUser, @SessionAttribute String oldPswd, @SessionAttribute String newPswd) {
+        if (UserUtil.isBlank(oldPswd) || UserUtil.isBlank(newPswd)) {
+            return ResponseResultUtil.wrongParameters();
+        }
         if (verifyIdentity(curUser, oldPswd)) {
-            return updatePswd(curUser.getUserName(), newPswd, curUser.getUserName())?
-                    ResponseResultUtil.buildSuccessfulResult(true)
-                    : ResponseResultUtil.buildFailedResult("修改密码失败");
+            try {
+                repository.update(curUser.getUserName(), UserUtil.encodePswd(newPswd), curUser.getUserName());
+            } catch (HibernateException e) {
+                LogManager.getLogger(LoggerName.ERROR).error("Admin reset pswd of user[{}] failed", curUser.getUserName());
+                LogManager.getLogger(LoggerName.DB).warn("Operation failed: update table[user] set pswd", e);
+                return ResponseResultUtil.failure("修改密码失败");
+            }
+            return ResponseResultUtil.success(true);
         }
-        return ResponseResultUtil.buildFailedResult("身份验证失败");
-    }
-
-    @RequestMapping("/admin/addUser")
-    public ResponseResult<Boolean> addUser(@SessionAttribute UserInfo curUser, @NotBlank String userName, @NotBlank String userPswd) {
-        if (!isAdmin(curUser)) {
-            return ResponseResultUtil.buildFailedResult("没有操作权限");
-        }
-        /// TODO: 处理UNIQUE异常
-        UserInfo info = userRepository.findByUserName(userName);
-        if (info != null) {
-            return ResponseResultUtil.buildFailedResult("该用户名已被占用");
-        }
-        User newUser = userRepository.insert(userName, userPswd, curUser.getUserName(), curUser.getUserName());
-        if (newUser.getId() == null || newUser.getId() < 0) {
-            return ResponseResultUtil.buildFailedResult("添加失败");
-        }
-        return ResponseResultUtil.buildSuccessfulResult(true);
-    }
-
-    @RequestMapping("/admin/resetPswd")
-    public ResponseResult<Boolean> resetPswd(@SessionAttribute UserInfo curUser, @NotBlank String userName, @NotBlank String newPswd) {
-        if (isAdmin(curUser)) {
-            return updatePswd(userName, newPswd, curUser.getUserName())?
-                    ResponseResultUtil.buildSuccessfulResult(true)
-                    : ResponseResultUtil.buildFailedResult("修改密码失败");
-        }
-        return ResponseResultUtil.buildFailedResult("没有操作权限");
+        return ResponseResultUtil.failure("身份验证失败");
     }
 
     private Boolean verifyIdentity(UserInfo curUser, String oldPswd) {
-        UserInfo info = userRepository.findByUserName(curUser.getUserName());
-        if (info == null || !oldPswd.equals(info.getUserPswd())) {
+        User info = repository.findByUserName(curUser.getUserName());
+        if (UserUtil.isNull(info) || UserUtil.dismatchPswd(oldPswd, info.getUserPswd())) {
             return false;
         }
         return true;
     }
 
-    private Boolean isAdmin(UserInfo userInfo) {
-        /// TODO: 更严密的管理员验证手段
-        return "admin".equals(userInfo.getUserName());
-    }
 
-    private Boolean updatePswd(String userName, String newPswd, String modifier) {
-        return userRepository.update(userName, newPswd, modifier);
-    }
-
-    private UserInfo desensitize(UserInfo userInfo) {
-        if (userInfo != null) {
-            userInfo.setUserPswd(null);
-        }
-        return userInfo;
-    }
 }

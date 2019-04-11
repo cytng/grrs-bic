@@ -1,7 +1,7 @@
-## 创建分级阅读推荐系统的数据库
+-- 创建分级阅读推荐系统的数据库
 CREATE DATABASE IF NOT EXISTS grrs CHARACTER SET utf8mb4;
 
-## 创建用户表
+-- 创建用户表
 CREATE TABLE IF NOT EXISTS grrs.user(
   id INT(11) NOT NULL AUTO_INCREMENT COMMENT '用户自增ID',
   creator VARCHAR(20) NOT NULL COMMENT '创建者',
@@ -10,16 +10,16 @@ CREATE TABLE IF NOT EXISTS grrs.user(
   modify_time DATETIME NOT NULL DEFAULT now() COMMENT '修改时间',
   deleted BIT NOT NULL DEFAULT false COMMENT '删除标志：0-未删除，1-已删除',
   user_name VARCHAR(20) NOT NULL COMMENT '用户名',
-  user_pswd VARBINARY(16) NOT NULL COMMENT '用户密码',
+  user_pswd VARCHAR(256) NOT NULL COMMENT '用户密码',
   PRIMARY KEY (id) COMMENT 'ID主键',
   UNIQUE user_name_unique_index (user_name) COMMENT '用户名的唯一索引'
 ) ENGINE = InnoDB;
 
-## 插入系统管理员:登录名admin, 密码123456
+-- 插入系统管理员:登录名admin, 密码password
 INSERT INTO grrs.user(creator, modifier, user_name, user_pswd)
-VALUES ('system', 'system', 'admin', ENCODE('123456','grrs'));
+VALUES ('system', 'system', 'admin', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG');
 
-## 创建书籍表
+-- 创建书籍表
 CREATE TABLE IF NOT EXISTS grrs.book(
   id INT(11) NOT NULL AUTO_INCREMENT COMMENT '用户自增ID',
   creator VARCHAR(20) NOT NULL COMMENT '创建者',

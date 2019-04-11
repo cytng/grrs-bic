@@ -1,6 +1,8 @@
 package org.bdilab.grrs.bic.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,6 +13,8 @@ import java.time.LocalDateTime;
  * @date 2019/4/10
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "user")
 public class User {

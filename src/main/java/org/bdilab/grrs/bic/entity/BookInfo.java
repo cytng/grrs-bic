@@ -4,40 +4,24 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.List;
 
 /**
- * 书籍数据表
  * @author caytng@163.com
- * @date 2019/4/11
+ * @date 2019/4/12
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "book")
-public class Book {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class BookInfo {
     private Long id;
-    @Column(nullable = false)
-    private String creator;
-    @Column(nullable = false)
-    private String modifier;
-    private LocalDateTime createTime;
-    private LocalDateTime modifyTime;
-    private Boolean deleted;
-
-    @Column(nullable = false)
     private String bookName;
-    @Column(nullable = false)
-    private String authors;
-    private String isbns;
+    private List<String> authors;
+    private List<String> isbns;
     private String coverUrl;
     private String summary;
-    private String topics;
-    private String series;
+    private List<String> topics;
+    private List<String> series;
     private Boolean is_fiction;
     private Float arBl;
     private String arIl;
@@ -48,5 +32,4 @@ public class Book {
     private Integer wordcount;
     private Integer pagecount;
     private Float amazonRating;
-
 }

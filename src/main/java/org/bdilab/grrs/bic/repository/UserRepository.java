@@ -1,14 +1,10 @@
 package org.bdilab.grrs.bic.repository;
 
 import org.bdilab.grrs.bic.entity.User;
-import org.bdilab.grrs.bic.entity.UserInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import static org.bdilab.grrs.bic.param.Project.SHORT_NAME;
 
 /**
  * @author caytng@163.com
@@ -17,21 +13,13 @@ import static org.bdilab.grrs.bic.param.Project.SHORT_NAME;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    String FIND_BY_NAME = "SELECT user_name, DECODE(user_pswd, " + SHORT_NAME + ") user_pswd " +
-            "FROM grrs.user WHERE user_name = :name AND deleted = FALSE ";
-    String INSERT_NEW_USER = "INSERT INTO grrs.user(user_name, user_pswd, creator, modifier) " +
-            "VALUES(:userName, ENCODE(:userPswd, " + SHORT_NAME + "), :creator, :modifier)";
-    String UPDATE_PSWD = "UPDATE grrs.user " +
-            "SET user_pswd = ENCODE(:newPswd, " + SHORT_NAME + "), modifier = :modifier " +
-            "WHERE user_name = :userName";
-
     /**
      * 根据名字查找用户
      * @param userName 用户名
      * @return 用户信息
      */
-    @Query(value = FIND_BY_NAME, nativeQuery = true)
-    UserInfo findByUserName(@Param("name") String userName);
+    @Query(value = "SELECT * FROM grrs.user WHERE user_name = ?1 AND deleted = FALSE", nativeQuery = true)
+    User findByUserName(String userName);
 
     /**
      * 插入一条用户信息
@@ -42,8 +30,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return
      */
     @Modifying
-    @Query(value = INSERT_NEW_USER, nativeQuery = true)
-    User insert(String userName, String userPswd, String creator, String modifier);
+    @Query(value = "INSERT INTO grrs.user(user_name, user_pswd, creator, modifier) " +
+            "VALUES(?1, ?2, ?3, ?4)", nativeQuery = true)
+    Boolean insert(String userName, String userPswd, String creator, String modifier);
 
     /**
      * 更新用户密码
@@ -53,6 +42,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return
      */
     @Modifying
-    @Query(value = UPDATE_PSWD, nativeQuery = true)
+    @Query(value = "UPDATE grrs.user SET user_pswd = ?2, modifier = ?3 " +
+            "WHERE user_name = ?1 AND deleted = FALSE", nativeQuery = true)
     Boolean update(String userName, String newPswd, String modifier);
+
+    /**
+     * 移除用户
+     * @param userName
+     * @return
+     */
+    @Modifying
+    @Query(value = "UPDATE grrs.user SET deleted = TRUE " +
+            "WHERE user_name = ?1 AND deleted = FALSE", nativeQuery = true)
+    Boolean remove(String userName);
 }
