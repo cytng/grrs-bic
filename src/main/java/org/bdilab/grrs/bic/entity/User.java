@@ -1,4 +1,4 @@
-package org.bdilab.grrs.bic.dao;
+package org.bdilab.grrs.bic.entity;
 
 import lombok.Data;
 
@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
+ * 用户数据表
  * @author caytng@163.com
  * @date 2019/4/10
  */
@@ -23,6 +24,7 @@ public class User {
     private LocalDateTime createTime;
     private LocalDateTime modifyTime;
     private Boolean deleted;
+
     @Column(nullable = false, unique = true)
     private String userName;
     @Column(nullable = false)
