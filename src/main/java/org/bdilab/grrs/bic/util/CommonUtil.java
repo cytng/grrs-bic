@@ -1,4 +1,4 @@
-package org.bdilab.grrs.bic.service.util;
+package org.bdilab.grrs.bic.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
@@ -12,6 +12,10 @@ import java.util.Collection;
 public class CommonUtil {
     public static Boolean isNull(Object o) {
         return o == null;
+    }
+
+    public static Boolean isNotNull(Object o) {
+        return !isNotNull(o);
     }
 
     public static Boolean isBlank(String str) {

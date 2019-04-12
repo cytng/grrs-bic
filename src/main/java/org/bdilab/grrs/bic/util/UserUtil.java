@@ -1,4 +1,4 @@
-package org.bdilab.grrs.bic.service.util;
+package org.bdilab.grrs.bic.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bdilab.grrs.bic.entity.User;
@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * @date 2019/4/11
  */
 public class UserUtil extends CommonUtil {
-    private static final String ADMIN_NAME = "admin";
+    public static final String ADMIN_NAME = "admin";
     private static final PasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
     public static Boolean isAdmin(UserInfo userInfo) {

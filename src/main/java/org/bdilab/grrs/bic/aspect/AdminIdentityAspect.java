@@ -5,11 +5,9 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.bdilab.grrs.bic.entity.UserInfo;
-import org.bdilab.grrs.bic.service.util.ResponseResultUtil;
-import org.bdilab.grrs.bic.service.util.UserUtil;
+import org.bdilab.grrs.bic.util.ResponseResultUtil;
+import org.bdilab.grrs.bic.util.UserUtil;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -27,7 +25,7 @@ import javax.servlet.http.HttpSession;
 @Order(1)
 public class AdminIdentityAspect {
 
-    @Pointcut(value = "execution(public * org.bdilab.grrs.bic.service.AdminController.*(..))")
+    @Pointcut(value = "execution(public * org.bdilab.grrs.bic.controller.AdminController.*(..))")
     public void adminOps(){}
 
     @Around("adminOps()")
@@ -36,12 +34,12 @@ public class AdminIdentityAspect {
         HttpSession session = request.getSession();
         UserInfo userInfo = (UserInfo) session.getAttribute("curUser");
         if (UserUtil.isNotAdmin(userInfo)) {
-            return ResponseResultUtil.failure("没有操作权限");
+            return ResponseResultUtil.withoutPermmision();
         }
         try {
             return joinPoint.proceed();
         } catch (Throwable throwable) {
-            return new ResponseEntity<>(throwable, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseResultUtil.internalError(throwable);
         }
     }
 }

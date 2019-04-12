@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  */
 @SpringBootApplication
 @EnableJpaRepositories
-@EntityScan
+@EntityScan(basePackages = "org.bdilab.grrs.bic.entity")
 public class BookinfoCollectionApplication {
     public static void main(String[] args) {
         SpringApplication.run(BookinfoCollectionApplication.class, args);

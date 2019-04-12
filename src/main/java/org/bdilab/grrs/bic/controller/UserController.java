@@ -1,4 +1,4 @@
-package org.bdilab.grrs.bic.service;
+package org.bdilab.grrs.bic.controller;
 
 import io.swagger.annotations.*;
 import org.apache.logging.log4j.LogManager;
@@ -6,8 +6,8 @@ import org.bdilab.grrs.bic.entity.User;
 import org.bdilab.grrs.bic.entity.UserInfo;
 import org.bdilab.grrs.bic.param.LoggerName;
 import org.bdilab.grrs.bic.repository.UserRepository;
-import org.bdilab.grrs.bic.service.util.ResponseResultUtil;
-import org.bdilab.grrs.bic.service.util.UserUtil;
+import org.bdilab.grrs.bic.util.ResponseResultUtil;
+import org.bdilab.grrs.bic.util.UserUtil;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     @Autowired
-    UserRepository repository;
+    private UserRepository repository;
 
     @ApiOperation(value = "用户登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -58,7 +58,7 @@ public class UserController {
                 LogManager.getLogger(LoggerName.DB).warn("Operation failed: update table[user] set pswd", e);
                 return ResponseResultUtil.failure("修改密码失败");
             }
-            return ResponseResultUtil.success(true);
+            return ResponseResultUtil.done();
         }
         return ResponseResultUtil.failure("身份验证失败");
     }

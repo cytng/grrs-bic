@@ -1,13 +1,10 @@
-package org.bdilab.grrs.bic.service.util;
+package org.bdilab.grrs.bic.util;
 
-import org.apache.commons.lang3.StringUtils;
 import org.bdilab.grrs.bic.entity.Book;
 import org.bdilab.grrs.bic.entity.BookInfo;
 import org.springframework.beans.BeanUtils;
-import org.springframework.util.CollectionUtils;
-
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -21,6 +18,10 @@ public class BookUtil extends CommonUtil {
         return isNull(bookInfo)
                 || isBlank(bookInfo.getBookName())
                 || isEmpty(bookInfo.getAuthors());
+    }
+
+    public static Boolean withoutId(BookInfo bookInfo) {
+        return isNull(bookInfo.getId());
     }
 
     public static Book convert(BookInfo bookInfo) {
@@ -57,6 +58,22 @@ public class BookUtil extends CommonUtil {
             bookInfo.setSeries(convert(book.getSeries()));
         }
         return bookInfo;
+    }
+
+    public static List<Book> combine(List<BookInfo> bookInfos) {
+        List<Book> bookList = new ArrayList<>();
+        for (BookInfo bookInfo: bookInfos) {
+            bookList.add(convert(bookInfo));
+        }
+        return bookList;
+    }
+
+    public static List<BookInfo> expand(List<Book> bookList) {
+        List<BookInfo> bookInfos = new ArrayList<>();
+        for (Book book: bookList) {
+            bookInfos.add(convert(book));
+        }
+        return bookInfos;
     }
 
     private static String convert(List<String> list) {

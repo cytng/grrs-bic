@@ -5,13 +5,25 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author caytng@163.com
  * @date 2019/4/10
  */
 @Repository
+@Transactional(rollbackFor = {Throwable.class})
 public interface UserRepository extends JpaRepository<User, Long> {
+
+    /**
+     * 根据创建者获取用户列表，包括已移除的用户
+     * @param curUser
+     * @return
+     */
+    @Query(value = "SELECT * FROM grrs.user WHERE creator = ?1 ORDER BY deleted", nativeQuery = true)
+    List<User> findAllByCreator(String curUser);
 
     /**
      * 根据名字查找用户
@@ -31,8 +43,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     @Modifying
     @Query(value = "INSERT INTO grrs.user(user_name, user_pswd, creator, modifier) " +
-            "VALUES(?1, ?2, ?3, ?4)", nativeQuery = true)
-    Boolean insert(String userName, String userPswd, String creator, String modifier);
+            "VALUES(?1, ?2, ?3, ?4) ON DUPLICATE KEY " +
+            "UPDATE deleted = FALSE, modifier = ?4, modify_time = now()", nativeQuery = true)
+    Integer insert(String userName, String userPswd, String creator, String modifier);
 
     /**
      * 更新用户密码
@@ -42,9 +55,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return
      */
     @Modifying
-    @Query(value = "UPDATE grrs.user SET user_pswd = ?2, modifier = ?3 " +
+    @Query(value = "UPDATE grrs.user SET user_pswd = ?2, modifier = ?3, modify_time = now() " +
             "WHERE user_name = ?1 AND deleted = FALSE", nativeQuery = true)
-    Boolean update(String userName, String newPswd, String modifier);
+    Integer update(String userName, String newPswd, String modifier);
 
     /**
      * 移除用户
@@ -52,7 +65,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return
      */
     @Modifying
-    @Query(value = "UPDATE grrs.user SET deleted = TRUE " +
+    @Query(value = "UPDATE grrs.user SET deleted = TRUE, modify_time = now() " +
             "WHERE user_name = ?1 AND deleted = FALSE", nativeQuery = true)
-    Boolean remove(String userName);
+    Integer remove(String userName);
+
 }

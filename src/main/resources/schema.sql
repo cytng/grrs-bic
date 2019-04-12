@@ -15,10 +15,6 @@ CREATE TABLE IF NOT EXISTS grrs.user(
   UNIQUE user_name_unique_index (user_name) COMMENT '用户名的唯一索引'
 ) ENGINE = InnoDB;
 
--- 插入系统管理员:登录名admin, 密码password
-INSERT INTO grrs.user(creator, modifier, user_name, user_pswd)
-VALUES ('system', 'system', 'admin', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG');
-
 -- 创建书籍表
 CREATE TABLE IF NOT EXISTS grrs.book(
   id INT(11) NOT NULL AUTO_INCREMENT COMMENT '用户自增ID',

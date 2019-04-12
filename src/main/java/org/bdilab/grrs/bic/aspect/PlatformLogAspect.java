@@ -7,7 +7,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.bdilab.grrs.bic.param.LoggerName;
-import org.springframework.core.annotation.Order;
+import org.bdilab.grrs.bic.util.ResponseResultUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 @Component
 public class PlatformLogAspect {
 
-    @Pointcut(value = "execution(public * org.bdilab.grrs.bic.service.*.*(..)) || execution(public * AdminIdentityAspect.identitfy(..))")
+    @Pointcut(value = "execution(public * org.bdilab.grrs.bic.controller.*.*(..))")
     public void platformOps(){}
 
     @Around("platformOps()")
@@ -43,7 +43,7 @@ public class PlatformLogAspect {
             return entity;
         } catch (Throwable throwable) {
             LogManager.getLogger(LoggerName.PLATFORM).warn( "Ops[" + methodName + "] failed with exceptions", throwable);
-            return new ResponseEntity<>(throwable, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseResultUtil.internalError(throwable);
         }
     }
 }
