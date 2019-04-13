@@ -15,7 +15,7 @@ public class CommonUtil {
     }
 
     public static Boolean isNotNull(Object o) {
-        return !isNotNull(o);
+        return !isNull(o);
     }
 
     public static Boolean isBlank(String str) {

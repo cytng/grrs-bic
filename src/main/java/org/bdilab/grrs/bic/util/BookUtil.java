@@ -3,9 +3,12 @@ package org.bdilab.grrs.bic.util;
 import org.bdilab.grrs.bic.entity.Book;
 import org.bdilab.grrs.bic.entity.BookInfo;
 import org.springframework.beans.BeanUtils;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author caytng@163.com
@@ -22,6 +25,97 @@ public class BookUtil extends CommonUtil {
 
     public static Boolean withoutId(BookInfo bookInfo) {
         return isNull(bookInfo.getId());
+    }
+
+    public static Boolean same(Book book1, Book book2) {
+        return Objects.equals(book1.getBookName(), book2.getBookName())
+                && Objects.equals(book1.getAuthors(), book2.getAuthors());
+    }
+
+    public static Boolean same(BookInfo info1, BookInfo info2) {
+        return Objects.equals(info1.getBookName(), info2.getBookName())
+                && Objects.equals(info1.getAuthors(), info2.getAuthors());
+    }
+
+    public static Book merge(Book old, Book update) {
+        boolean updated = false;
+        if (isNotNull(update.getBookName())) {
+            old.setBookName(update.getBookName());
+            updated = true;
+        }
+        if (isNotNull(update.getAuthors())) {
+            old.setAuthors(update.getAuthors());
+            updated = true;
+        }
+        if (isNotNull(update.getIsbns())) {
+            old.setIsbns(update.getIsbns());
+            updated = true;
+        }
+        if (isNotNull(update.getCoverUrl())) {
+            old.setCoverUrl(update.getCoverUrl());
+            updated = true;
+        }
+        if (isNotNull(update.getSummary())) {
+            old.setSummary(update.getSummary());
+            updated = true;
+        }
+        if (isNotNull(update.getTopics())) {
+            old.setTopics(update.getTopics());
+            updated = true;
+        }
+        if (isNotNull(update.getSeries())) {
+            old.setSeries(update.getSeries());
+            updated = true;
+        }
+        if (isNotNull(update.getIsFiction())) {
+            old.setIsFiction(update.getIsFiction());
+            updated = true;
+        }
+        if (isNotNull(update.getArBl())) {
+            old.setArBl(update.getArBl());
+            updated = true;
+        }
+        if (isNotNull(update.getArIl())) {
+            old.setArIl(update.getArIl());
+            updated = true;
+        }
+        if (isNotNull(update.getArPoints())) {
+            old.setArPoints(update.getArPoints());
+            updated = true;
+        }
+        if (isNotNull(update.getArRating())) {
+            old.setArRating(update.getArRating());
+            updated = true;
+        }
+        if (isNotNull(update.getLexilePrefix())) {
+            old.setLexilePrefix(update.getLexilePrefix());
+            updated = true;
+        }
+        if (isNotNull(update.getLexile())) {
+            old.setLexile(update.getLexile());
+            updated = true;
+        }
+        if (isNotNull(update.getWordcount())) {
+            old.setWordcount(update.getWordcount());
+            updated = true;
+        }
+        if (isNotNull(update.getPagecount())) {
+            old.setPagecount(update.getPagecount());
+            updated = true;
+        }
+        if (isNotNull(update.getAmazonRating())) {
+            old.setAmazonRating(update.getAmazonRating());
+            updated = true;
+        }
+        if (updated && isNotNull(update.getModifier())) {
+            old.setModifier(update.getModifier());
+            old.setModifyTime(LocalDateTime.now());
+        }
+        return old;
+    }
+
+    public static BookInfo merge(BookInfo old, BookInfo update) {
+        return convert(merge(convert(old), convert(update)));
     }
 
     public static Book convert(BookInfo bookInfo) {
@@ -86,7 +180,7 @@ public class BookUtil extends CommonUtil {
     }
 
     private static List<String> convert(String str) {
-        List<String> list = Arrays.asList();
+        List<String> list = new ArrayList<>();
         String[] strings = str.split(SEPARATOR);
         for (String s: strings) {
             if (isNotBlank(s)) {

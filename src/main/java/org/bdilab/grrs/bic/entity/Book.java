@@ -38,7 +38,7 @@ public class Book {
     private String summary;
     private String topics;
     private String series;
-    private Boolean is_fiction;
+    private Boolean isFiction;
     private Float arBl;
     private String arIl;
     private Float arPoints;

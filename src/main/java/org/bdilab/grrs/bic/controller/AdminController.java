@@ -13,7 +13,6 @@ import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +34,9 @@ public class AdminController {
     public ResponseEntity addOrEnableUser(@SessionAttribute UserInfo curUser, @RequestBody UserInfo newUserInfo) {
         if (UserUtil.isIllegalInfo(newUserInfo)) {
             return ResponseResultUtil.wrongParameters();
+        }
+        if (UserUtil.isSelf(curUser, newUserInfo)) {
+            return ResponseResultUtil.withoutPermmision();
         }
         try {
             Integer result = repository.insert(newUserInfo.getUserName(), newUserInfo.getUserPswd(),
@@ -61,11 +63,11 @@ public class AdminController {
         if (UserUtil.isBlankString(userName)) {
             return ResponseResultUtil.wrongParameters();
         }
-        if (userName.equals(curUser.getUserName())) {
+        if (UserUtil.isSelf(curUser, new UserInfo(userName, null))) {
             return ResponseResultUtil.withoutPermmision();
         }
         try {
-            repository.remove(userName);
+            repository.remove(userName, curUser.getUserName());
         } catch (HibernateException e) {
             LogManager.getLogger(LoggerName.ERROR).error("Admin remove user[{}] failed", userName);
             LogManager.getLogger(LoggerName.DB).warn("Operation failed: update table[user] set deleted", e);
@@ -78,7 +80,7 @@ public class AdminController {
     @RequestMapping(value = "/listUsers", method = RequestMethod.GET)
     public ResponseEntity listUsers(@SessionAttribute UserInfo curUser) {
         List<User> users = repository.findAllByCreator(curUser.getUserName());
-        return ResponseResultUtil.success(users);
+        return ResponseResultUtil.success(UserUtil.desensitize(users));
     }
 
     @ApiOperation(value = "管理员重置密码")
@@ -87,8 +89,11 @@ public class AdminController {
         if (UserUtil.isIllegalInfo(userInfo)) {
             return ResponseResultUtil.wrongParameters();
         }
+        if (UserUtil.isSelf(curUser, userInfo)) {
+            return ResponseResultUtil.withoutPermmision();
+        }
         try {
-            repository.update(userInfo.getUserName(), userInfo.getUserPswd(), curUser.getUserName());
+            repository.update(userInfo.getUserName(), UserUtil.encodePswd(userInfo.getUserPswd()), curUser.getUserName());
         } catch (HibernateException e) {
             LogManager.getLogger(LoggerName.ERROR).error("Admin reset pswd of user[{}] failed", userInfo.getUserName());
             LogManager.getLogger(LoggerName.DB).warn("Operation failed: update table[user] set user_pswd", e);

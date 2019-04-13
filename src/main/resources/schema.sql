@@ -2,7 +2,7 @@
 CREATE DATABASE IF NOT EXISTS grrs CHARACTER SET utf8mb4;
 
 -- 创建用户表
-CREATE TABLE IF NOT EXISTS grrs.user(
+CREATE TABLE IF NOT EXISTS user(
   id INT(11) NOT NULL AUTO_INCREMENT COMMENT '用户自增ID',
   creator VARCHAR(20) NOT NULL COMMENT '创建者',
   modifier VARCHAR(20) NOT NULL COMMENT '修改者',
@@ -10,13 +10,14 @@ CREATE TABLE IF NOT EXISTS grrs.user(
   modify_time DATETIME NOT NULL DEFAULT now() COMMENT '修改时间',
   deleted BIT NOT NULL DEFAULT false COMMENT '删除标志：0-未删除，1-已删除',
   user_name VARCHAR(20) NOT NULL COMMENT '用户名',
-  user_pswd VARCHAR(256) NOT NULL COMMENT '用户密码',
+  user_pswd VARCHAR(64) NOT NULL COMMENT '用户密码',
   PRIMARY KEY (id) COMMENT 'ID主键',
+  INDEX creator_index (creator(10)) COMMENT '创建者前缀索引',
   UNIQUE user_name_unique_index (user_name) COMMENT '用户名的唯一索引'
 ) ENGINE = InnoDB;
 
 -- 创建书籍表
-CREATE TABLE IF NOT EXISTS grrs.book(
+CREATE TABLE IF NOT EXISTS book(
   id INT(11) NOT NULL AUTO_INCREMENT COMMENT '用户自增ID',
   creator VARCHAR(20) NOT NULL COMMENT '创建者',
   modifier VARCHAR(20) NOT NULL COMMENT '修改者',
@@ -41,6 +42,7 @@ CREATE TABLE IF NOT EXISTS grrs.book(
   pagecount INT DEFAULT NULL COMMENT '书籍页数',
   amazon_rating DECIMAL(1,1) DEFAULT NULL COMMENT '亚马逊用户评分',
   PRIMARY KEY (id) COMMENT 'ID主键',
+  INDEX creator_index (creator(10)) COMMENT '创建者前缀索引',
   INDEX book_name_prefix_index (book_name(10)) COMMENT '书名前缀索引',
   INDEX authors_prefix_index (authors(10)) COMMENT '作者列表前缀索引'
 ) ENGINE = InnoDB;

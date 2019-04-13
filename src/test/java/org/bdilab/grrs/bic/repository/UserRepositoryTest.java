@@ -33,31 +33,31 @@ public class UserRepositoryTest {
     private UserRepository repository;
 
     @Before
-    public void setup() {
+    public void setUp() {
         repository.insert(ADMIN_NAME, PSWD1, SYSTEM_NAME, SYSTEM_NAME);
     }
 
     @After
-    public void cleanup() {
+    public void tearDown() {
         repository.deleteAll();
     }
 
     @Test
     public void test() {
-        findAllByCreator();
-        findByUserName();
+        findAllBySystem();
+        findByAdminName();
         insert();
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        update();
-        remove();
-        enable();
+        updatePswdOfAdmin();
+        disableUser();
+        enableUser();
     }
 
-    private void findAllByCreator() {
+    private void findAllBySystem() {
         List<User> users = repository.findAllByCreator(SYSTEM_NAME);
         Assert.assertEquals(users.size(), 1);
 
@@ -66,7 +66,7 @@ public class UserRepositoryTest {
         Assert.assertEquals(admin.getUserName(), ADMIN_NAME);
     }
 
-    private void findByUserName() {
+    private void findByAdminName() {
         User admin = repository.findByUserName(ADMIN_NAME);
         Assert.assertNotNull(admin);
         Assert.assertFalse(admin.getDeleted());
@@ -84,7 +84,7 @@ public class UserRepositoryTest {
         Assert.assertTrue(user.getCreateTime().equals(user.getModifyTime()));
     }
 
-    private void update() {
+    private void updatePswdOfAdmin() {
         Integer result = repository.update(ADMIN_NAME, PSWD2, SYSTEM_NAME);
         Assert.assertEquals((long)result, 1);
 
@@ -94,8 +94,8 @@ public class UserRepositoryTest {
         Assert.assertFalse(admin.getCreateTime().equals(admin.getModifyTime()));
     }
 
-    private void remove() {
-        Integer result = repository.remove(USER_NAME);
+    private void disableUser() {
+        Integer result = repository.remove(USER_NAME, ADMIN_NAME);
         Assert.assertEquals((long)result, 1);
 
         User user = repository.findByUserName(USER_NAME);
@@ -104,10 +104,12 @@ public class UserRepositoryTest {
         List<User> users = repository.findAllByCreator(SYSTEM_NAME);
         Assert.assertEquals(users.size(), 2);
         Assert.assertFalse(users.get(0).getDeleted());
-        Assert.assertTrue(users.get(1).getDeleted());
+        user = users.get(1);
+        Assert.assertTrue(user.getDeleted());
+        Assert.assertFalse(user.getCreator().equals(user.getModifier()));
     }
 
-    private void enable() {
+    private void enableUser() {
         Integer result = repository.insert(USER_NAME, PSWD2, ADMIN_NAME, ADMIN_NAME);
         Assert.assertEquals((long)result, 2);
 

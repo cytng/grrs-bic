@@ -23,7 +23,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
      * @param authors
      * @return
      */
-    @Query(value = "SELECT * FROM grrs.book WHERE book_name = ?1 AND authors = ?2 AND deleted = FALSE", nativeQuery = true)
+    @Query(value = "SELECT * FROM book WHERE book_name = ?1 AND authors = ?2 AND deleted = FALSE", nativeQuery = true)
     List<Book> findBooksByBookNameAndAuthors(String bookName, String authors);
 
     /**
@@ -31,7 +31,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
      * @param creator
      * @return
      */
-    @Query(value = "SELECT * FROM grrs.book WHERE creator = ?1 AND deleted = FALSE", nativeQuery = true)
-    List<Book> findAllByCreator(String creator);
+    @Query(value = "SELECT * FROM book WHERE (creator = ?1 OR modifier = ?1) AND deleted = FALSE GROUP BY creator", nativeQuery = true)
+    List<Book> findAllByCreatorOrModifier(String creator);
 
 }

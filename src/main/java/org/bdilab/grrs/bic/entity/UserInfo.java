@@ -1,8 +1,6 @@
 package org.bdilab.grrs.bic.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * 用户信息传输对象
@@ -13,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInfo {
-    private String userName;
+    @NonNull private String userName;
     private String userPswd;
 }

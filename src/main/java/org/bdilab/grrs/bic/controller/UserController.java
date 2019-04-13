@@ -38,8 +38,8 @@ public class UserController {
         }
         if (UserUtil.matchPswd(userInfo.getUserPswd(), user.getUserPswd())) {
             // 脱敏
-            UserUtil.desensitize(userInfo);
-            return ResponseResultUtil.success(userInfo);
+            UserInfo info = UserUtil.desensitize(UserUtil.extract(user));
+            return ResponseResultUtil.success(info);
         }
         return ResponseResultUtil.failure("密码错误");
     }
@@ -70,6 +70,5 @@ public class UserController {
         }
         return true;
     }
-
 
 }

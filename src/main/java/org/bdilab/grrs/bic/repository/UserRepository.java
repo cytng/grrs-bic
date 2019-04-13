@@ -22,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param curUser
      * @return
      */
-    @Query(value = "SELECT * FROM grrs.user WHERE creator = ?1 ORDER BY deleted", nativeQuery = true)
+    @Query(value = "SELECT * FROM user WHERE creator = ?1 ORDER BY deleted", nativeQuery = true)
     List<User> findAllByCreator(String curUser);
 
     /**
@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param userName 用户名
      * @return 用户信息
      */
-    @Query(value = "SELECT * FROM grrs.user WHERE user_name = ?1 AND deleted = FALSE", nativeQuery = true)
+    @Query(value = "SELECT * FROM user WHERE user_name = ?1 AND deleted = FALSE", nativeQuery = true)
     User findByUserName(String userName);
 
     /**
@@ -42,7 +42,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return
      */
     @Modifying
-    @Query(value = "INSERT INTO grrs.user(user_name, user_pswd, creator, modifier) " +
+    @Query(value = "INSERT INTO user(user_name, user_pswd, creator, modifier) " +
             "VALUES(?1, ?2, ?3, ?4) ON DUPLICATE KEY " +
             "UPDATE deleted = FALSE, modifier = ?4, modify_time = now()", nativeQuery = true)
     Integer insert(String userName, String userPswd, String creator, String modifier);
@@ -55,7 +55,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return
      */
     @Modifying
-    @Query(value = "UPDATE grrs.user SET user_pswd = ?2, modifier = ?3, modify_time = now() " +
+    @Query(value = "UPDATE user SET user_pswd = ?2, modifier = ?3, modify_time = now() " +
             "WHERE user_name = ?1 AND deleted = FALSE", nativeQuery = true)
     Integer update(String userName, String newPswd, String modifier);
 
@@ -65,8 +65,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return
      */
     @Modifying
-    @Query(value = "UPDATE grrs.user SET deleted = TRUE, modify_time = now() " +
+    @Query(value = "UPDATE user SET deleted = TRUE, modifier = ?2, modify_time = now() " +
             "WHERE user_name = ?1 AND deleted = FALSE", nativeQuery = true)
-    Integer remove(String userName);
+    Integer remove(String userName, String modifier);
 
 }

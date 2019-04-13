@@ -6,6 +6,10 @@ import org.bdilab.grrs.bic.entity.UserInfo;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * @author caytng@163.com
  * @date 2019/4/11
@@ -23,6 +27,10 @@ public class UserUtil extends CommonUtil {
         return !isAdmin(userInfo);
     }
 
+    public static Boolean isSelf(UserInfo operator, UserInfo userInfo) {
+        return Objects.equals(operator.getUserName(), userInfo.getUserName());
+    }
+
     public static UserInfo extract(User user) {
         if (isNull(user)) {
             return null;
@@ -30,18 +38,33 @@ public class UserUtil extends CommonUtil {
         return new UserInfo(user.getUserName(), user.getUserPswd());
     }
 
-    public static User desensitize(User user) {
-        if (user != null) {
+    public static List<UserInfo> extract(List<User> userList) {
+        List<UserInfo> userInfos = new ArrayList<>();
+        for (User user: userList) {
+            userInfos.add(extract(user));
+        }
+        return userInfos;
+    }
+
+    public static UserInfo desensitize(UserInfo userInfo) {
+        if (isNotNull(userInfo)) {
+            userInfo.setUserPswd(null);
+        }
+        return userInfo;
+    }
+
+    private static User desensitize(User user) {
+        if (isNotNull(user)) {
             user.setUserPswd(null);
         }
         return user;
     }
 
-    public static UserInfo desensitize(UserInfo userInfo) {
-        if (userInfo != null) {
-            userInfo.setUserPswd(null);
+    public static List<User> desensitize(List<User> userList) {
+        for (User user: userList) {
+            desensitize(user);
         }
-        return userInfo;
+        return userList;
     }
 
     public static Boolean isBlankString(String str) {

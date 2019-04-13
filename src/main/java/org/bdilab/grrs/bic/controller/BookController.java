@@ -37,9 +37,7 @@ public class BookController {
         if (BookUtil.isNotEmpty(bookList)) {
             return ResponseResultUtil.accepted(bookList);
         }
-        newBook.setCreator(curUser.getUserName());
-        newBook.setModifier(curUser.getUserName());
-        Book result = repository.save(newBook);
+        Book result = repository.save(init(newBook, curUser.getUserName()));
         return ResponseResultUtil.created(result);
     }
 
@@ -49,9 +47,7 @@ public class BookController {
         if (BookUtil.isIllegalInfo(bookInfo)) {
             return ResponseResultUtil.wrongParameters();
         }
-        Book newBook = BookUtil.convert(bookInfo);
-        newBook.setCreator(curUser.getUserName());
-        newBook.setModifier(curUser.getUserName());
+        Book newBook = init(BookUtil.convert(bookInfo), curUser.getUserName());
         Book result = repository.save(newBook);
         return ResponseResultUtil.created(result);
     }
@@ -59,7 +55,7 @@ public class BookController {
     @ApiOperation("列举书籍")
     @RequestMapping(value = "/listBooks", method = RequestMethod.GET)
     public ResponseEntity listBooks(@SessionAttribute UserInfo curUser) {
-        List<Book> books = repository.findAllByCreator(curUser.getUserName());
+        List<Book> books = repository.findAllByCreatorOrModifier(curUser.getUserName());
         return ResponseResultUtil.success(BookUtil.expand(books));
     }
 
@@ -72,10 +68,27 @@ public class BookController {
         if (BookUtil.withoutId(bookInfo)) {
             return ResponseResultUtil.tooManyObjects();
         }
-        Book updateCondition = BookUtil.convert(bookInfo);
-        updateCondition.setModifier(curUser.getUserName());
-        updateCondition.setModifyTime(LocalDateTime.now());
-        Book result = repository.save(updateCondition);
+        if (!repository.existsById(bookInfo.getId())) {
+            return ResponseResultUtil.wrongParameters();
+        }
+        Book updateCondition = edit(BookUtil.convert(bookInfo), curUser.getUserName());
+        Book bookFromDB = repository.findById(bookInfo.getId()).get();
+        Book result = repository.save(BookUtil.merge(bookFromDB, updateCondition));
         return ResponseResultUtil.success(result);
+    }
+
+    private Book init(Book book, String operator) {
+        book.setCreator(operator);
+        book.setModifier(operator);
+        book.setCreateTime(LocalDateTime.now());
+        book.setModifyTime(LocalDateTime.now());
+        book.setDeleted(false);
+        return book;
+    }
+
+    private Book edit(Book book, String operator) {
+        book.setModifier(operator);
+        book.setModifyTime(LocalDateTime.now());
+        return book;
     }
 }
