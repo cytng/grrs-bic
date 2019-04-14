@@ -31,7 +31,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
      * @param creator
      * @return
      */
-    @Query(value = "SELECT * FROM book WHERE (creator = ?1 OR modifier = ?1) AND deleted = FALSE GROUP BY creator", nativeQuery = true)
+    @Query(value = "SELECT * FROM book WHERE (creator = ?1 OR modifier = ?1) AND deleted = FALSE ORDER BY book_name", nativeQuery = true)
     List<Book> findAllByCreatorOrModifier(String creator);
 
 }

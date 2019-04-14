@@ -6,7 +6,6 @@ import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,76 +37,76 @@ public class BookUtil extends CommonUtil {
     }
 
     public static Book merge(Book old, Book update) {
-        boolean updated = false;
+        boolean contentUpdated = false;
         if (isNotNull(update.getBookName())) {
             old.setBookName(update.getBookName());
-            updated = true;
+            contentUpdated = true;
         }
         if (isNotNull(update.getAuthors())) {
             old.setAuthors(update.getAuthors());
-            updated = true;
+            contentUpdated = true;
         }
         if (isNotNull(update.getIsbns())) {
             old.setIsbns(update.getIsbns());
-            updated = true;
+            contentUpdated = true;
         }
         if (isNotNull(update.getCoverUrl())) {
             old.setCoverUrl(update.getCoverUrl());
-            updated = true;
+            contentUpdated = true;
         }
         if (isNotNull(update.getSummary())) {
             old.setSummary(update.getSummary());
-            updated = true;
+            contentUpdated = true;
         }
         if (isNotNull(update.getTopics())) {
             old.setTopics(update.getTopics());
-            updated = true;
+            contentUpdated = true;
         }
         if (isNotNull(update.getSeries())) {
             old.setSeries(update.getSeries());
-            updated = true;
+            contentUpdated = true;
         }
         if (isNotNull(update.getIsFiction())) {
             old.setIsFiction(update.getIsFiction());
-            updated = true;
+            contentUpdated = true;
         }
         if (isNotNull(update.getArBl())) {
             old.setArBl(update.getArBl());
-            updated = true;
+            contentUpdated = true;
         }
         if (isNotNull(update.getArIl())) {
             old.setArIl(update.getArIl());
-            updated = true;
+            contentUpdated = true;
         }
         if (isNotNull(update.getArPoints())) {
             old.setArPoints(update.getArPoints());
-            updated = true;
+            contentUpdated = true;
         }
         if (isNotNull(update.getArRating())) {
             old.setArRating(update.getArRating());
-            updated = true;
+            contentUpdated = true;
         }
         if (isNotNull(update.getLexilePrefix())) {
             old.setLexilePrefix(update.getLexilePrefix());
-            updated = true;
+            contentUpdated = true;
         }
         if (isNotNull(update.getLexile())) {
             old.setLexile(update.getLexile());
-            updated = true;
+            contentUpdated = true;
         }
         if (isNotNull(update.getWordcount())) {
             old.setWordcount(update.getWordcount());
-            updated = true;
+            contentUpdated = true;
         }
         if (isNotNull(update.getPagecount())) {
             old.setPagecount(update.getPagecount());
-            updated = true;
+            contentUpdated = true;
         }
         if (isNotNull(update.getAmazonRating())) {
             old.setAmazonRating(update.getAmazonRating());
-            updated = true;
+            contentUpdated = true;
         }
-        if (updated && isNotNull(update.getModifier())) {
+        if (contentUpdated && isNotNull(update.getModifier())) {
             old.setModifier(update.getModifier());
             old.setModifyTime(LocalDateTime.now());
         }
@@ -170,7 +169,7 @@ public class BookUtil extends CommonUtil {
         return bookInfos;
     }
 
-    private static String convert(List<String> list) {
+    public static String convert(List<String> list) {
         StringBuilder builder = new StringBuilder();
         for (String str : list) {
             builder.append(str);
@@ -179,7 +178,7 @@ public class BookUtil extends CommonUtil {
         return builder.toString();
     }
 
-    private static List<String> convert(String str) {
+    public static List<String> convert(String str) {
         List<String> list = new ArrayList<>();
         String[] strings = str.split(SEPARATOR);
         for (String s: strings) {
@@ -189,6 +188,5 @@ public class BookUtil extends CommonUtil {
         }
         return list;
     }
-
 
 }

@@ -19,7 +19,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +46,6 @@ public class BookControllerTest {
 
     @Autowired
     private UserRepository userRepository;
-
 
     private UserInfo adminInfo;
     private UserInfo userInfo;
@@ -83,7 +81,7 @@ public class BookControllerTest {
 
         addResult = bookController.addBook(userInfo, newBook);
         Assert.assertNotNull(addResult);
-        Assert.assertTrue(HttpStatus.CREATED.equals(addResult.getStatusCode()));
+        Assert.assertTrue(HttpStatus.OK.equals(addResult.getStatusCode()));
 
         userController.login(adminInfo);
         addResult = bookController.addBook(adminInfo, newBook);
@@ -100,19 +98,16 @@ public class BookControllerTest {
 
         addResult = bookController.forceAddBook(adminInfo, newBook);
         Assert.assertNotNull(addResult);
-        Assert.assertTrue(HttpStatus.CREATED.equals(addResult.getStatusCode()));
-        Assert.assertTrue(addResult.getBody() instanceof Book);
-        BookInfo bookInfo2 = BookUtil.convert((Book) addResult.getBody());
-        Assert.assertFalse(bookInfo1.equals(bookInfo2));
-        Assert.assertTrue(BookUtil.same(bookInfo1, bookInfo2));
+        Assert.assertTrue(HttpStatus.OK.equals(addResult.getStatusCode()));
 
-        userController.login(userInfo);
-        ResponseEntity listResult = bookController.listBooks(userInfo);
+        ResponseEntity listResult = bookController.listBooks(adminInfo);
         Assert.assertNotNull(listResult);
         Assert.assertTrue(listResult.getBody() instanceof List);
-        List<Book> books = (List<Book>) listResult.getBody();
+        List<BookInfo> books = (List<BookInfo>) listResult.getBody();
         Assert.assertEquals(books.size(), 1L);
+        BookInfo bookInfo2 = books.get(0);
 
+        userController.login(userInfo);
         ResponseEntity editResult = bookController.editBook(userInfo, bookInfo2);
         Assert.assertNotNull(editResult);
         Assert.assertTrue(editResult.getBody() instanceof Book);
@@ -122,8 +117,7 @@ public class BookControllerTest {
         listResult = bookController.listBooks(userInfo);
         Assert.assertNotNull(listResult);
         Assert.assertTrue(listResult.getBody() instanceof List);
-        books = (List<Book>) listResult.getBody();
+        books = (List<BookInfo>) listResult.getBody();
         Assert.assertEquals(books.size(), 2L);
-        System.out.println(books);
     }
 }

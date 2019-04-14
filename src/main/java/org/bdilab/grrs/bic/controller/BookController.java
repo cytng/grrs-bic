@@ -32,13 +32,13 @@ public class BookController {
         if (BookUtil.isIllegalInfo(bookInfo)) {
             return ResponseResultUtil.wrongParameters();
         }
-        Book newBook = BookUtil.convert(bookInfo);
-        List<Book> bookList = repository.findBooksByBookNameAndAuthors(newBook.getBookName(), newBook.getAuthors());
+        List<Book> bookList = repository.findBooksByBookNameAndAuthors(bookInfo.getBookName(), BookUtil.convert(bookInfo.getAuthors()));
         if (BookUtil.isNotEmpty(bookList)) {
             return ResponseResultUtil.accepted(bookList);
         }
-        Book result = repository.save(init(newBook, curUser.getUserName()));
-        return ResponseResultUtil.created(result);
+        Book newBook = BookUtil.convert(bookInfo);
+        repository.save(init(newBook, curUser.getUserName()));
+        return ResponseResultUtil.done();
     }
 
     @ApiOperation("強制添加书籍")
@@ -48,8 +48,8 @@ public class BookController {
             return ResponseResultUtil.wrongParameters();
         }
         Book newBook = init(BookUtil.convert(bookInfo), curUser.getUserName());
-        Book result = repository.save(newBook);
-        return ResponseResultUtil.created(result);
+        repository.save(newBook);
+        return ResponseResultUtil.done();
     }
 
     @ApiOperation("列举书籍")
@@ -91,4 +91,5 @@ public class BookController {
         book.setModifyTime(LocalDateTime.now());
         return book;
     }
+
 }
