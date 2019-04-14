@@ -5,11 +5,20 @@ package org.bdilab.grrs.bic.param;
  * @date 2019/4/11
  */
 public enum ARInterestLevel {
-    LG("LG(K-3)"), MG1("MG(4-8)"), MG2("MG+(6 AND UP)"), UG("UG(9-12)");
+    LG("LG K-3"), MG1("MG 4-8"), MG2("MG+ 6 AND UP"), UG("UG 9-12git ");
 
     private String fullname;
     ARInterestLevel(String fullname) {
         this.fullname = fullname;
+    }
+
+    public static ARInterestLevel find(String fullname) {
+        for (ARInterestLevel il: ARInterestLevel.values()) {
+            if (il.toString().equals(fullname)) {
+                return il;
+            }
+        }
+        return null;
     }
 
     @Override
