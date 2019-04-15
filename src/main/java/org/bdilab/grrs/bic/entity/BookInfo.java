@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bdilab.grrs.bic.param.ARInterestLevel;
+import org.bdilab.grrs.bic.param.LexilePrefix;
 
 import java.util.List;
 
@@ -25,10 +27,10 @@ public class BookInfo {
     private List<String> series;
     private Boolean isFiction;
     private Float arBl;
-    private String arIl;
+    private ARInterestLevel arIl;
     private Float arPoints;
     private Float arRating;
-    private String lexilePrefix;
+    private LexilePrefix lexilePrefix;
     private Integer lexile;
     private Integer wordcount;
     private Integer pagecount;
