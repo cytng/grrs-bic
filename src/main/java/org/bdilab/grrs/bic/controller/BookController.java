@@ -26,7 +26,7 @@ public class BookController {
     @Autowired
     private BookRepository repository;
 
-    @ApiOperation("添加书籍")
+    @ApiOperation(value = "添加书籍", response = ResponseEntity.class, notes = "参数有误，返回406；库中存在同名书籍，返回202和书籍列表；添加成功，返回200")
     @RequestMapping(value = "/addBook", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity addBook(@SessionAttribute UserInfo curUser, @RequestBody BookInfo bookInfo) {
         if (BookUtil.isIllegalInfo(bookInfo)) {
@@ -41,7 +41,7 @@ public class BookController {
         return ResponseResultUtil.done();
     }
 
-    @ApiOperation("強制添加书籍")
+    @ApiOperation(value = "強制添加书籍", response = ResponseEntity.class, notes = "参数有误，返回406；添加成功，返回200")
     @RequestMapping(value = "/forceAddBook", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity forceAddBook(@SessionAttribute UserInfo curUser, @RequestBody BookInfo bookInfo) {
         if (BookUtil.isIllegalInfo(bookInfo)) {
@@ -52,14 +52,14 @@ public class BookController {
         return ResponseResultUtil.done();
     }
 
-    @ApiOperation("列举书籍")
+    @ApiOperation(value = "列举书籍", response = ResponseEntity.class, notes = "返回200和书籍列表，默认按照书名排序")
     @RequestMapping(value = "/listBooks", method = RequestMethod.GET)
     public ResponseEntity listBooks(@SessionAttribute UserInfo curUser) {
         List<Book> books = repository.findAllByCreatorOrModifier(curUser.getUserName());
         return ResponseResultUtil.success(BookUtil.expand(books));
     }
 
-    @ApiOperation("修改书籍")
+    @ApiOperation(value = "修改书籍", response = ResponseEntity.class, notes = "参数有误，返回406；缺少书籍ID，无法确定操作对象，返回409；修改成功，返回200和修改后的书籍信息")
     @RequestMapping(value = "/editBook", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity editBook(@SessionAttribute UserInfo curUser, @RequestBody BookInfo bookInfo) {
         if (BookUtil.isIllegalInfo(bookInfo)) {

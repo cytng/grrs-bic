@@ -29,13 +29,15 @@ public class AdminController {
     @Autowired
     private UserRepository repository;
 
-    @ApiOperation(value = "管理员添加或启用用户")
+    @ApiOperation(value = "管理员添加或启用用户", response = ResponseEntity.class, notes = "参数有误或无操作权限，返回406；创建新用户，返回码为201；启用旧用户，返回码为202；操作失败，返回420")
     @RequestMapping(value = "/addOrEnableUser", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity addOrEnableUser(@SessionAttribute UserInfo curUser, @RequestBody UserInfo newUserInfo) {
         if (UserUtil.isIllegalInfo(newUserInfo)) {
             return ResponseResultUtil.wrongParameters();
         }
-        if (UserUtil.isSelf(curUser, newUserInfo)) {
+        // 管理员不能创建系统用户和管理员用户
+        if (UserUtil.sameNameAsSystem(newUserInfo)
+                || UserUtil.isSelf(curUser, newUserInfo)) {
             return ResponseResultUtil.withoutPermmision();
         }
         try {
@@ -57,7 +59,7 @@ public class AdminController {
         return ResponseResultUtil.failure("添加用户失败");
     }
 
-    @ApiOperation(value = "管理员禁用用户")
+    @ApiOperation(value = "管理员禁用用户", response = ResponseEntity.class, notes = "参数有误或无操作权限，返回406；操作成功，返回200；操作失败，返回420")
     @RequestMapping(value = "/disableUser", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity disableUser(@SessionAttribute UserInfo curUser, @RequestBody String userName) {
         if (UserUtil.isBlankString(userName)) {
@@ -76,14 +78,14 @@ public class AdminController {
         return ResponseResultUtil.done();
     }
 
-    @ApiOperation(value = "管理员列举用户")
+    @ApiOperation(value = "管理员列举用户", response = ResponseEntity.class, notes = "返回200和用户列表")
     @RequestMapping(value = "/listUsers", method = RequestMethod.GET)
     public ResponseEntity listUsers(@SessionAttribute UserInfo curUser) {
         List<User> users = repository.findAllByCreator(curUser.getUserName());
         return ResponseResultUtil.success(UserUtil.desensitize(users));
     }
 
-    @ApiOperation(value = "管理员重置密码")
+    @ApiOperation(value = "管理员重置密码", response = ResponseEntity.class, notes = "参数有误或无操作权限，返回406；操作成功，返回200；操作失败，返回420")
     @RequestMapping(value = "/resetPswd", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity resetPswd(@SessionAttribute UserInfo curUser, @RequestBody UserInfo userInfo) {
         if (UserUtil.isIllegalInfo(userInfo)) {

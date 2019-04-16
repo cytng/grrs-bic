@@ -2,6 +2,8 @@ package org.bdilab.grrs.bic.util;
 
 import org.bdilab.grrs.bic.entity.Book;
 import org.bdilab.grrs.bic.entity.BookInfo;
+import org.bdilab.grrs.bic.param.ARInterestLevel;
+import org.bdilab.grrs.bic.param.LexilePrefix;
 import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDateTime;
@@ -132,6 +134,12 @@ public class BookUtil extends CommonUtil {
         if (isNotEmpty(bookInfo.getSeries())) {
             book.setSeries(convert(bookInfo.getSeries()));
         }
+        if (isNotNull(bookInfo.getArIl())) {
+            book.setArIl(bookInfo.getArIl().name());
+        }
+        if (isNotNull(bookInfo.getLexilePrefix())) {
+            book.setLexilePrefix(bookInfo.getLexilePrefix().name());
+        }
         return book;
     }
 
@@ -149,6 +157,12 @@ public class BookUtil extends CommonUtil {
         }
         if (isNotBlank(book.getSeries())) {
             bookInfo.setSeries(convert(book.getSeries()));
+        }
+        if (isNotBlank(book.getArIl())) {
+            bookInfo.setArIl(ARInterestLevel.valueOf(book.getArIl()));
+        }
+        if (isNotBlank(book.getLexilePrefix())) {
+            bookInfo.setLexilePrefix(LexilePrefix.valueOf(book.getLexilePrefix()));
         }
         return bookInfo;
     }

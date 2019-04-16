@@ -3,6 +3,8 @@ package org.bdilab.grrs.bic.controller;
 import org.bdilab.grrs.bic.entity.Book;
 import org.bdilab.grrs.bic.entity.BookInfo;
 import org.bdilab.grrs.bic.entity.UserInfo;
+import org.bdilab.grrs.bic.param.ARInterestLevel;
+import org.bdilab.grrs.bic.param.LexilePrefix;
 import org.bdilab.grrs.bic.repository.BookRepository;
 import org.bdilab.grrs.bic.repository.UserRepository;
 import org.bdilab.grrs.bic.util.BookUtil;
@@ -51,7 +53,7 @@ public class BookControllerTest {
     private UserInfo userInfo;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         userRepository.insert("admin", "$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG", "system", "system");
         adminInfo = new UserInfo("admin", "password");
         userInfo = new UserInfo("caytng", "123456");
@@ -61,7 +63,7 @@ public class BookControllerTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         bookRepository.deleteAll();
         userRepository.deleteAll();
     }
@@ -78,6 +80,11 @@ public class BookControllerTest {
         List<String> authors = new ArrayList();
         authors.add("Dr. Seuss");
         newBook.setAuthors(authors);
+        newBook.setIsFiction(true);
+        newBook.setArBl(6.9F);
+        newBook.setArIl(ARInterestLevel.LG);
+        newBook.setLexile(430);
+        newBook.setLexilePrefix(LexilePrefix.AD);
 
         addResult = bookController.addBook(userInfo, newBook);
         Assert.assertNotNull(addResult);

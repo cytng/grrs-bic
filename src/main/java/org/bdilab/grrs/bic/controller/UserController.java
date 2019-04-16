@@ -26,7 +26,7 @@ public class UserController {
     @Autowired
     private UserRepository repository;
 
-    @ApiOperation(value = "用户登录")
+    @ApiOperation(value = "用户登录", response = ResponseEntity.class, notes = "参数有误，返回406；用户不存储在或密码错误，返回420；登录成功，返回200和用户信息")
     @RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity login(@RequestBody UserInfo userInfo) {
         if (UserUtil.isIllegalInfo(userInfo)) {
@@ -44,7 +44,7 @@ public class UserController {
         return ResponseResultUtil.failure("密码错误");
     }
 
-    @ApiOperation(value = "用户修改密码")
+    @ApiOperation(value = "用户修改密码", response = ResponseEntity.class, notes = "参数有误，返回406；旧密码验证失败或修改失败，返回420；修改成功，返回200")
     @RequestMapping(value = "/user/modifyPswd", method = RequestMethod.POST)
     public ResponseEntity modifySelfPswd(@SessionAttribute UserInfo curUser, @SessionAttribute String oldPswd, @SessionAttribute String newPswd) {
         if (UserUtil.isBlank(oldPswd) || UserUtil.isBlank(newPswd)) {

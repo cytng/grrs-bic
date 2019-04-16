@@ -16,11 +16,20 @@ import java.util.Objects;
  */
 public class UserUtil extends CommonUtil {
     public static final String ADMIN_NAME = "admin";
+    public static final String SYSTEM_NAME = "system";
     private static final PasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
     public static Boolean isAdmin(UserInfo userInfo) {
         /// TODO: 更严密的管理员验证手段
         return ADMIN_NAME.equals(userInfo.getUserName());
+    }
+
+    public static Boolean sameNameAsSystem(String userName) {
+        return SYSTEM_NAME.equals(userName);
+    }
+
+    public static Boolean sameNameAsSystem(UserInfo userInfo) {
+        return sameNameAsSystem(userInfo.getUserName());
     }
 
     public static Boolean isNotAdmin(UserInfo userInfo) {

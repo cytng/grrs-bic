@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.usermodel.*;
 import org.bdilab.grrs.bic.entity.Book;
 import org.bdilab.grrs.bic.param.ARInterestLevel;
+import org.bdilab.grrs.bic.param.LexilePrefix;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -96,7 +97,7 @@ public class ImportUtil {
                     case "Lexile": str = cell.toString();
                         String prefix = str.substring(0, 2);
                         if (!Character.isDigit(prefix.charAt(0)) &&
-                                !Character.isDigit(prefix.charAt(1))) {book.setLexilePrefix(prefix);}
+                                !Character.isDigit(prefix.charAt(1))) {book.setLexilePrefix(LexilePrefix.valueOf(prefix).name());}
                         String level = compile("[^0-9]").matcher(str).replaceAll("");
                         if (StringUtils.isBlank(level)) {break;}
                         book.setLexile(Integer.valueOf(level)); break;

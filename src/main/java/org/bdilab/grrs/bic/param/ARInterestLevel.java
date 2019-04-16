@@ -14,15 +14,14 @@ public enum ARInterestLevel {
 
     public static ARInterestLevel find(String fullname) {
         for (ARInterestLevel il: ARInterestLevel.values()) {
-            if (il.toString().equals(fullname)) {
+            if (il.getFullname().equals(fullname)) {
                 return il;
             }
         }
         return null;
     }
 
-    @Override
-    public String toString() {
+    public String getFullname() {
         return fullname;
     }
 }
