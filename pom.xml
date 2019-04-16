@@ -14,7 +14,7 @@
         <version>2.1.4.RELEASE</version>
     </parent>
 
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <project.compiler.version>1.8</project.compiler.version>
