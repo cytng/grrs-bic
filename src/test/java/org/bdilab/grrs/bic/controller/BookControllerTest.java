@@ -77,9 +77,10 @@ public class BookControllerTest {
         Assert.assertTrue(HttpStatus.NOT_ACCEPTABLE.equals(addResult.getStatusCode()));
 
         newBook.setBookName("The Cat in the Hat");
-        List<String> authors = new ArrayList();
-        authors.add("Dr. Seuss");
-        newBook.setAuthors(authors);
+//        List<String> authors = new ArrayList();
+//        authors.add("Dr. Seuss");
+//        newBook.setAuthors(authors);
+        newBook.setAuthors("Dr. Seuss;");
         newBook.setIsFiction(true);
         newBook.setArBl(6.9F);
         newBook.setArIl(ARInterestLevel.LG);

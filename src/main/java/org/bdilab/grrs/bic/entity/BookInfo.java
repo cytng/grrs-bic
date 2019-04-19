@@ -7,6 +7,7 @@ import lombok.NonNull;
 import org.bdilab.grrs.bic.param.ARInterestLevel;
 import org.bdilab.grrs.bic.param.LexilePrefix;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -19,12 +20,16 @@ import java.util.List;
 public class BookInfo {
     private Long id;
     @NonNull private String bookName;
-    @NonNull private List<String> authors;
-    private List<String> isbns;
+//    @NonNull private List<String> authors;
+    @NotNull private String authors;
+//    private List<String> isbns;
+    private String isbns;
     private String coverUrl;
     private String summary;
-    private List<String> topics;
-    private List<String> series;
+//    private List<String> topics;
+    private String topics;
+//    private List<String> series;
+    private String series;
     private Boolean isFiction;
     private Float arBl;
     private ARInterestLevel arIl;

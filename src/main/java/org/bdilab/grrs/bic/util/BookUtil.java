@@ -21,7 +21,8 @@ public class BookUtil extends CommonUtil {
     public static Boolean isIllegalInfo(BookInfo bookInfo) {
         return isNull(bookInfo)
                 || isBlank(bookInfo.getBookName())
-                || isEmpty(bookInfo.getAuthors());
+//                || isEmpty(bookInfo.getAuthors());
+                || isBlank(bookInfo.getAuthors());
     }
 
     public static Boolean withoutId(BookInfo bookInfo) {
@@ -122,18 +123,18 @@ public class BookUtil extends CommonUtil {
     public static Book convert(BookInfo bookInfo) {
         Book book = new Book();
         BeanUtils.copyProperties(bookInfo, book);
-        if (isNotEmpty(bookInfo.getAuthors())) {
-            book.setAuthors(convert(bookInfo.getAuthors()));
-        }
-        if (isNotEmpty(bookInfo.getIsbns())) {
-            book.setIsbns(convert(bookInfo.getIsbns()));
-        }
-        if (isNotEmpty(bookInfo.getTopics())) {
-            book.setTopics(convert(bookInfo.getTopics()));
-        }
-        if (isNotEmpty(bookInfo.getSeries())) {
-            book.setSeries(convert(bookInfo.getSeries()));
-        }
+//        if (isNotEmpty(bookInfo.getAuthors())) {
+//            book.setAuthors(convert(bookInfo.getAuthors()));
+//        }
+//        if (isNotEmpty(bookInfo.getIsbns())) {
+//            book.setIsbns(convert(bookInfo.getIsbns()));
+//        }
+//        if (isNotEmpty(bookInfo.getTopics())) {
+//            book.setTopics(convert(bookInfo.getTopics()));
+//        }
+//        if (isNotEmpty(bookInfo.getSeries())) {
+//            book.setSeries(convert(bookInfo.getSeries()));
+//        }
         if (isNotNull(bookInfo.getArIl())) {
             book.setArIl(bookInfo.getArIl().name());
         }
@@ -146,18 +147,18 @@ public class BookUtil extends CommonUtil {
     public static BookInfo convert(Book book) {
         BookInfo bookInfo = new BookInfo();
         BeanUtils.copyProperties(book, bookInfo);
-        if (isNotBlank(book.getAuthors())) {
-            bookInfo.setAuthors(convert(book.getAuthors()));
-        }
-        if (isNotBlank(book.getIsbns())) {
-            bookInfo.setIsbns(convert(book.getIsbns()));
-        }
-        if (isNotBlank(book.getTopics())) {
-            bookInfo.setTopics(convert(book.getTopics()));
-        }
-        if (isNotBlank(book.getSeries())) {
-            bookInfo.setSeries(convert(book.getSeries()));
-        }
+//        if (isNotBlank(book.getAuthors())) {
+//            bookInfo.setAuthors(convert(book.getAuthors()));
+//        }
+//        if (isNotBlank(book.getIsbns())) {
+//            bookInfo.setIsbns(convert(book.getIsbns()));
+//        }
+//        if (isNotBlank(book.getTopics())) {
+//            bookInfo.setTopics(convert(book.getTopics()));
+//        }
+//        if (isNotBlank(book.getSeries())) {
+//            bookInfo.setSeries(convert(book.getSeries()));
+//        }
         if (isNotBlank(book.getArIl())) {
             bookInfo.setArIl(ARInterestLevel.valueOf(book.getArIl()));
         }

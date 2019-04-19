@@ -32,11 +32,11 @@ public class BookController {
         if (BookUtil.isIllegalInfo(bookInfo)) {
             return ResponseResultUtil.wrongParameters();
         }
-        List<Book> bookList = repository.findBooksByBookNameAndAuthors(bookInfo.getBookName(), BookUtil.convert(bookInfo.getAuthors()));
+        Book newBook = BookUtil.convert(bookInfo);
+        List<Book> bookList = repository.findBooksByBookNameAndAuthors(newBook.getBookName(), newBook.getAuthors());
         if (BookUtil.isNotEmpty(bookList)) {
             return ResponseResultUtil.accepted(bookList);
         }
-        Book newBook = BookUtil.convert(bookInfo);
         repository.save(init(newBook, curUser.getUserName()));
         return ResponseResultUtil.done();
     }
