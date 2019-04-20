@@ -35,7 +35,8 @@ public class PlatformLogAspect {
             LogManager.getLogger(LoggerName.PLATFORM).trace("Start Ops[{}]", methodName);
             ResponseEntity entity = (ResponseEntity) joinPoint.proceed();
             LogManager.getLogger(LoggerName.PLATFORM).trace("Ops[{}] End", methodName);
-            if (HttpStatus.OK.equals(entity.getStatusCode())) {
+            if (HttpStatus.OK.equals(entity.getStatusCode()) ||
+                    HttpStatus.CREATED.equals(entity.getStatusCode())) {
                 LogManager.getLogger(LoggerName.PLATFORM).info("Ops[{}] success with params[{}]", methodName, args);
             } else {
                 LogManager.getLogger(LoggerName.PLATFORM).info("Ops[{}] failed with params[{}]", methodName, args);
