@@ -44,5 +44,6 @@ CREATE TABLE IF NOT EXISTS book(
   PRIMARY KEY (id) COMMENT 'ID主键',
   INDEX creator_index (creator(10)) COMMENT '创建者前缀索引',
   INDEX book_name_prefix_index (book_name(10)) COMMENT '书名前缀索引',
-  INDEX authors_prefix_index (authors(10)) COMMENT '作者列表前缀索引'
+  INDEX authors_prefix_index (authors(10)) COMMENT '作者列表前缀索引',
+  FULLTEXT bookname_authors_fulltext (book_name, authors) COMMENT '书名索引全文索引'
 ) ENGINE = InnoDB;

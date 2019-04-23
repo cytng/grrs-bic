@@ -127,5 +127,11 @@ public class BookControllerTest {
         Assert.assertTrue(listResult.getBody() instanceof List);
         books = (List<BookInfo>) listResult.getBody();
         Assert.assertEquals(books.size(), 2L);
+
+        ResponseEntity searchResult = bookController.searchBooks(userInfo, "Seuss");
+        Assert.assertNotNull(searchResult);
+        Assert.assertTrue(searchResult.getBody() instanceof List);
+        books = (List<BookInfo>) searchResult.getBody();
+        Assert.assertEquals(books.size(), 2L);
     }
 }

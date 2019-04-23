@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -56,6 +57,13 @@ public class BookController {
     @RequestMapping(value = "/listBooks", method = RequestMethod.GET)
     public ResponseEntity listBooks(@SessionAttribute UserInfo curUser) {
         List<Book> books = repository.findAllByCreatorOrModifier(curUser.getUserName());
+        return ResponseResultUtil.success(BookUtil.expand(books));
+    }
+
+    @ApiOperation(value = "根据关键字搜索书籍", response = ResponseEntity.class, notes = "返回200和书籍列表，默认按照相关度降序排列")
+    @RequestMapping(value = "/searchBooks", method = RequestMethod.GET)
+    public ResponseEntity searchBooks(@SessionAttribute UserInfo curUser, @NotBlank String keyword) {
+        List<Book> books = repository.findBooksByKeywordInBookNameOrAuthors(keyword);
         return ResponseResultUtil.success(BookUtil.expand(books));
     }
 
