@@ -76,11 +76,11 @@ public class BookControllerTest {
         Assert.assertNotNull(addResult);
         Assert.assertTrue(HttpStatus.NOT_ACCEPTABLE.equals(addResult.getStatusCode()));
 
-        newBook.setBookName("The Cat in the Hat");
+        newBook.setBookName("(12) We're Going On A Bear Hunt (-/CD)");
 //        List<String> authors = new ArrayList();
 //        authors.add("Dr. Seuss");
 //        newBook.setAuthors(authors);
-        newBook.setAuthors("Dr. Seuss;");
+        newBook.setAuthors("Michael Rosen;");
         newBook.setIsFiction(true);
         newBook.setArBl(6.9F);
         newBook.setArIl(ARInterestLevel.LG);
@@ -128,7 +128,7 @@ public class BookControllerTest {
         books = (List<BookInfo>) listResult.getBody();
         Assert.assertEquals(books.size(), 2L);
 
-        ResponseEntity searchResult = bookController.searchBooks(userInfo, "Seuss");
+        ResponseEntity searchResult = bookController.searchBooks(userInfo, "\'re");
         Assert.assertNotNull(searchResult);
         Assert.assertTrue(searchResult.getBody() instanceof List);
         books = (List<BookInfo>) searchResult.getBody();

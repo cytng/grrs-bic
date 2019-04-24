@@ -61,8 +61,11 @@ public class BookController {
     }
 
     @ApiOperation(value = "根据关键字搜索书籍", response = ResponseEntity.class, notes = "返回200和书籍列表，默认按照相关度降序排列")
-    @RequestMapping(value = "/searchBooks", method = RequestMethod.GET)
-    public ResponseEntity searchBooks(@SessionAttribute UserInfo curUser, @NotBlank String keyword) {
+    @RequestMapping(value = "/searchBooks", method = RequestMethod.POST)
+    public ResponseEntity searchBooks(@SessionAttribute UserInfo curUser, @RequestBody String keyword) {
+        if (BookUtil.isBlank(keyword)) {
+            return ResponseResultUtil.wrongParameters();
+        }
         List<Book> books = repository.findBooksByKeywordInBookNameOrAuthors(keyword);
         return ResponseResultUtil.success(BookUtil.expand(books));
     }
