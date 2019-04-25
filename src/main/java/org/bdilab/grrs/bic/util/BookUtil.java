@@ -136,10 +136,10 @@ public class BookUtil extends CommonUtil {
 //            book.setSeries(convert(bookInfo.getSeries()));
 //        }
         if (isNotNull(bookInfo.getArIl())) {
-            book.setArIl(bookInfo.getArIl().name());
+            book.setArIl(bookInfo.getArIl());
         }
         if (isNotNull(bookInfo.getLexilePrefix())) {
-            book.setLexilePrefix(bookInfo.getLexilePrefix().name());
+            book.setLexilePrefix(bookInfo.getLexilePrefix());
         }
         return book;
     }
@@ -160,10 +160,10 @@ public class BookUtil extends CommonUtil {
 //            bookInfo.setSeries(convert(book.getSeries()));
 //        }
         if (isNotBlank(book.getArIl())) {
-            bookInfo.setArIl(ARInterestLevel.valueOf(book.getArIl()));
+            bookInfo.setArIl(book.getArIl());
         }
         if (isNotBlank(book.getLexilePrefix())) {
-            bookInfo.setLexilePrefix(LexilePrefix.valueOf(book.getLexilePrefix()));
+            bookInfo.setLexilePrefix(book.getLexilePrefix());
         }
         return bookInfo;
     }

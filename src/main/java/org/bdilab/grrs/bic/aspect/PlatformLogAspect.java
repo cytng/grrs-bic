@@ -6,12 +6,19 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.bdilab.grrs.bic.entity.UserInfo;
 import org.bdilab.grrs.bic.param.LoggerName;
+import org.bdilab.grrs.bic.util.CommonUtil;
 import org.bdilab.grrs.bic.util.ResponseResultUtil;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.lang.reflect.Method;
 
 
@@ -21,6 +28,7 @@ import java.lang.reflect.Method;
  */
 @Aspect
 @Component
+@Order(3)
 public class PlatformLogAspect {
 
     @Pointcut(value = "execution(public * org.bdilab.grrs.bic.controller.*.*(..))")

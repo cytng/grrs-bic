@@ -32,10 +32,10 @@ public class BookInfo {
     private String series;
     private Boolean isFiction;
     private Float arBl;
-    private ARInterestLevel arIl;
+    private String arIl;
     private Float arPoints;
     private Float arRating;
-    private LexilePrefix lexilePrefix;
+    private String lexilePrefix;
     private Integer lexile;
     private Integer wordcount;
     private Integer pagecount;

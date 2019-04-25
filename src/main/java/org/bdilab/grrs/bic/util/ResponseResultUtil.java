@@ -17,6 +17,10 @@ public class ResponseResultUtil {
         return new ResponseEntity<>("参数有误", HttpStatus.NOT_ACCEPTABLE);
     }
 
+    public static ResponseEntity missingSession() {
+        return new ResponseEntity<>("未认证", HttpStatus.UNAUTHORIZED);
+    }
+
     public static ResponseEntity withoutPermmision() {
         return new ResponseEntity<>("没有操作权限", HttpStatus.NOT_ACCEPTABLE);
     }

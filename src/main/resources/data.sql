@@ -1,6 +1,6 @@
 -- 插入系统管理员: 登录名admin, 密码password
-INSERT INTO user(creator, modifier, user_name, user_pswd)
-VALUES ('system', 'system', 'admin', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG');
+insert into user(creator, modifier, user_name, user_pswd)
+values ('system', 'system', 'admin', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG');
 
 -- 精品100本
 begin;
@@ -109,3 +109,5 @@ insert into book(creator,modifier,isbns,summary,is_fiction,ar_points,wordcount,c
 insert into book(creator,modifier,isbns,summary,is_fiction,ar_points,wordcount,cover_url,pagecount,topics,book_name,lexile,ar_rating,ar_bl,series,ar_il,authors) values('system','system','9780064451031','Explains what shooting stars are, what they are made of, and what happens to them when they land on Earth.',false,0.5,903,'https://images-na.ssl-images-amazon.com/images/P/1515767523.jpg',32,'Science-Astronomy; Science-Physics; Universe/Solar System-Asteroids/Comets/Meteors;','(100) Shooting Stars (-/CD)',620,3.5,3.7,'Let\'s-Read-and-Find-Out Science: Stage 1;
 ','LG','Branley, Franklyn M.');
 commit;
+
+select id, book_name, authors from book where match(book_name, authors) against('an');

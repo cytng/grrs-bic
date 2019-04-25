@@ -83,9 +83,9 @@ public class BookControllerTest {
         newBook.setAuthors("Michael Rosen;");
         newBook.setIsFiction(true);
         newBook.setArBl(6.9F);
-        newBook.setArIl(ARInterestLevel.LG);
+        newBook.setArIl(ARInterestLevel.LG.name());
         newBook.setLexile(430);
-        newBook.setLexilePrefix(LexilePrefix.AD);
+        newBook.setLexilePrefix(LexilePrefix.AD.name());
 
         addResult = bookController.addBook(userInfo, newBook);
         Assert.assertNotNull(addResult);

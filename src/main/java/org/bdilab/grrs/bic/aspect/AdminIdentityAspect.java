@@ -22,7 +22,7 @@ import javax.servlet.http.HttpSession;
  */
 @Aspect
 @Component
-@Order(1)
+@Order(2)
 public class AdminIdentityAspect {
 
     @Pointcut(value = "execution(public * org.bdilab.grrs.bic.controller.AdminController.*(..))")

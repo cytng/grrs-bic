@@ -1,6 +1,11 @@
 -- 创建分级阅读推荐系统的数据库
 CREATE DATABASE IF NOT EXISTS grrs CHARACTER SET utf8mb4;
 
+-- 配置全文索引结束词
+USE grrs;
+CREATE TABLE empty_stopword(value VARCHAR(30)) ENGINE = InnoDB;
+SET GLOBAL innodb_ft_server_stopword_table = 'grrs/empty_stopword';
+
 -- 创建用户表
 CREATE TABLE IF NOT EXISTS user(
   id INT(11) NOT NULL AUTO_INCREMENT COMMENT '用户自增ID',
