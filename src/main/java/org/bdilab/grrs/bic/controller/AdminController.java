@@ -42,7 +42,7 @@ public class AdminController {
             return ResponseResultUtil.withoutPermmision();
         }
         try {
-            Integer result = repository.insert(newUserInfo.getUserName(), newUserInfo.getUserPswd(),
+            Integer result = repository.insert(newUserInfo.getUserName(), UserUtil.encodePswd(newUserInfo.getUserPswd()),
                     curUser.getUserName(), curUser.getUserName());
             if (result == 1) {
                 User user = repository.findByUserName(newUserInfo.getUserName());
