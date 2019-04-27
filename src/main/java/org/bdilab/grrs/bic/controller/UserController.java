@@ -14,6 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+
 /**
  * 用户接口
  * @author caytng@163.com
@@ -46,7 +48,7 @@ public class UserController {
 
     @ApiOperation(value = "用户修改密码", response = ResponseEntity.class, notes = "参数有误，返回406；旧密码验证失败或修改失败，返回420；修改成功，返回200")
     @RequestMapping(value = "/user/modifyPswd", method = RequestMethod.POST)
-    public ResponseEntity modifySelfPswd(@SessionAttribute UserInfo curUser, @RequestBody String oldPswd, @RequestBody String newPswd) {
+    public ResponseEntity modifySelfPswd(UserInfo curUser, @RequestBody String oldPswd, @RequestBody String newPswd) {
         if (UserUtil.isBlank(oldPswd) || UserUtil.isBlank(newPswd)) {
             return ResponseResultUtil.wrongParameters();
         }

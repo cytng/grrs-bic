@@ -11,6 +11,7 @@ import org.bdilab.grrs.bic.entity.UserInfo;
 import org.bdilab.grrs.bic.param.LoggerName;
 import org.bdilab.grrs.bic.util.CommonUtil;
 import org.bdilab.grrs.bic.util.ResponseResultUtil;
+import org.bdilab.grrs.bic.util.UserUtil;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -35,12 +36,12 @@ public class UserLoginAspect {
         if (result.getBody() instanceof UserInfo) {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             HttpSession session = request.getSession();
-            session.setAttribute("curUser", result.getBody());
+            session.setAttribute(UserUtil.CUR_USER, result.getBody());
         }
     }
 
-    @Pointcut(value = "execution(public * org.bdilab.grrs.bic.controller.*.*(..)) " +
-            "and !execution(public * org.bdilab.grrs.bic.controller.UserController.login(..))")
+    @Pointcut(value =  "(!execution(public * org.bdilab.grrs.bic.controller.UserController.login(..)) " +
+            "&& execution(public * org.bdilab.grrs.bic.controller.*.*(..)))")
     public void loginedOps(){}
 
     @Around("loginedOps()")
@@ -50,10 +51,12 @@ public class UserLoginAspect {
         LogManager.getLogger(LoggerName.PLATFORM).trace("Prepare Ops[{}]", methodName);
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         HttpSession session = request.getSession();
-        UserInfo userInfo = (UserInfo) session.getAttribute("curUser");
-        if (CommonUtil.isNull(userInfo)) {
+        UserInfo curUser = (UserInfo) session.getAttribute(UserUtil.CUR_USER);
+        if (CommonUtil.isNull(curUser)) {
             return ResponseResultUtil.missingSession();
         }
-        return joinPoint.proceed();
+        Object[] args = joinPoint.getArgs();
+        args[0] = curUser;
+        return joinPoint.proceed(args);
     }
 }

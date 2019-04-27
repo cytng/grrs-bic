@@ -17,6 +17,7 @@ import java.util.Objects;
 public class UserUtil extends CommonUtil {
     public static final String ADMIN_NAME = "admin";
     public static final String SYSTEM_NAME = "system";
+    public static final String CUR_USER = "curUser";
     private static final PasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
     public static Boolean isAdmin(UserInfo userInfo) {

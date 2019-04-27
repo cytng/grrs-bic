@@ -6,11 +6,13 @@ import org.bdilab.grrs.bic.entity.*;
 import org.bdilab.grrs.bic.repository.BookRepository;
 import org.bdilab.grrs.bic.util.BookUtil;
 import org.bdilab.grrs.bic.util.ResponseResultUtil;
+import org.bdilab.grrs.bic.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,7 +31,8 @@ public class BookController {
 
     @ApiOperation(value = "添加书籍", response = ResponseEntity.class, notes = "参数有误，返回406；库中存在同名书籍，返回202和书籍列表；添加成功，返回200")
     @RequestMapping(value = "/addBook", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity addBook(@SessionAttribute UserInfo curUser, @RequestBody BookInfo bookInfo) {
+    public ResponseEntity addBook(UserInfo curUser, @RequestBody BookInfo bookInfo) {
+//        UserInfo curUser = (UserInfo) session.getAttribute(UserUtil.CUR_USER);
         if (BookUtil.isIllegalInfo(bookInfo)) {
             return ResponseResultUtil.wrongParameters();
         }
@@ -44,7 +47,7 @@ public class BookController {
 
     @ApiOperation(value = "強制添加书籍", response = ResponseEntity.class, notes = "参数有误，返回406；添加成功，返回200")
     @RequestMapping(value = "/forceAddBook", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity forceAddBook(@SessionAttribute UserInfo curUser, @RequestBody BookInfo bookInfo) {
+    public ResponseEntity forceAddBook(UserInfo curUser, @RequestBody BookInfo bookInfo) {
         if (BookUtil.isIllegalInfo(bookInfo)) {
             return ResponseResultUtil.wrongParameters();
         }
@@ -55,14 +58,14 @@ public class BookController {
 
     @ApiOperation(value = "列举书籍", response = ResponseEntity.class, notes = "返回200和书籍列表，默认按照书名排序")
     @RequestMapping(value = "/listBooks", method = RequestMethod.GET)
-    public ResponseEntity listBooks(@SessionAttribute UserInfo curUser) {
+    public ResponseEntity listBooks(UserInfo curUser) {
         List<Book> books = repository.findAllByCreatorOrModifier(curUser.getUserName());
         return ResponseResultUtil.success(BookUtil.expand(books));
     }
 
     @ApiOperation(value = "根据关键字搜索书籍", response = ResponseEntity.class, notes = "返回200和书籍列表，默认按照相关度降序排列")
     @RequestMapping(value = "/searchBooks", method = RequestMethod.POST)
-    public ResponseEntity searchBooks(@SessionAttribute UserInfo curUser, @RequestBody String keyword) {
+    public ResponseEntity searchBooks(UserInfo curUser, @RequestBody String keyword) {
         if (BookUtil.isBlank(keyword)) {
             return ResponseResultUtil.wrongParameters();
         }
@@ -72,7 +75,7 @@ public class BookController {
 
     @ApiOperation(value = "修改书籍", response = ResponseEntity.class, notes = "参数有误，返回406；缺少书籍ID，无法确定操作对象，返回409；修改成功，返回200和修改后的书籍信息")
     @RequestMapping(value = "/editBook", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity editBook(@SessionAttribute UserInfo curUser, @RequestBody BookInfo bookInfo) {
+    public ResponseEntity editBook(UserInfo curUser, @RequestBody BookInfo bookInfo) {
         if (BookUtil.isIllegalInfo(bookInfo)) {
             return ResponseResultUtil.wrongParameters();
         }

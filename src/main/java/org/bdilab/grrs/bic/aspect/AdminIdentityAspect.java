@@ -32,7 +32,7 @@ public class AdminIdentityAspect {
     public Object identitfy(ProceedingJoinPoint joinPoint) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         HttpSession session = request.getSession();
-        UserInfo userInfo = (UserInfo) session.getAttribute("curUser");
+        UserInfo userInfo = (UserInfo) session.getAttribute(UserUtil.CUR_USER);
         if (UserUtil.isNotAdmin(userInfo)) {
             return ResponseResultUtil.withoutPermmision();
         }
