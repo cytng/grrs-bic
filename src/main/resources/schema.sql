@@ -1,11 +1,6 @@
 -- 创建分级阅读推荐系统的数据库
 CREATE DATABASE IF NOT EXISTS grrs CHARACTER SET utf8mb4;
 
--- 配置全文索引结束词
-USE grrs;
-CREATE TABLE empty_stopword(value VARCHAR(30)) ENGINE = InnoDB;
-SET GLOBAL innodb_ft_server_stopword_table = 'grrs/empty_stopword';
-
 -- 创建用户表
 CREATE TABLE IF NOT EXISTS user(
   id INT(11) NOT NULL AUTO_INCREMENT COMMENT '用户自增ID',
@@ -17,8 +12,7 @@ CREATE TABLE IF NOT EXISTS user(
   user_name VARCHAR(20) NOT NULL COMMENT '用户名',
   user_pswd VARCHAR(64) NOT NULL COMMENT '用户密码',
   PRIMARY KEY (id) COMMENT 'ID主键',
-  INDEX creator_index (creator(10)) COMMENT '创建者前缀索引',
-  UNIQUE user_name_unique_index (user_name) COMMENT '用户名的唯一索引'
+  UNIQUE uname_unique_index (user_name) COMMENT '用户名的唯一索引'
 ) ENGINE = InnoDB;
 
 -- 创建书籍表
@@ -46,9 +40,21 @@ CREATE TABLE IF NOT EXISTS book(
   wordcount INT DEFAULT NULL COMMENT '书籍词数',
   pagecount INT DEFAULT NULL COMMENT '书籍页数',
   amazon_rating DECIMAL(2,1) DEFAULT NULL COMMENT '亚马逊用户评分',
-  PRIMARY KEY (id) COMMENT 'ID主键',
-  INDEX creator_index (creator(10)) COMMENT '创建者前缀索引',
-  INDEX book_name_prefix_index (book_name(10)) COMMENT '书名前缀索引',
-  INDEX authors_prefix_index (authors(10)) COMMENT '作者列表前缀索引',
-  FULLTEXT bookname_authors_fulltext (book_name, authors) COMMENT '书名索引全文索引'
+  PRIMARY KEY (id) COMMENT 'ID主键'
 ) ENGINE = InnoDB;
+
+
+-- SELECT *, CONCAT(dist*100/sum, '%') AS radio FROM (SELECT COUNT(DISTINCT creator) AS sum, COUNT(DISTINCT LEFT(creator, 5)) AS dist FROM user) AS src;
+-- SELECT *, CONCAT(dist*100/sum, '%') AS radio FROM (SELECT COUNT(DISTINCT book_name) AS sum, COUNT(DISTINCT LEFT(book_name, 5)) AS dist FROM book) AS src;
+-- SELECT *, CONCAT(dist*100/sum, '%') AS radio FROM (SELECT COUNT(DISTINCT authors) AS sum, COUNT(DISTINCT LEFT(authors, 8)) AS dist FROM book) AS src;
+-- ALTER TABLE user DROP INDEX creator_prefix_index;
+-- ALTER TABLE book DROP INDEX bookname_prefix_index;
+ALTER TABLE user ADD INDEX creator_prefix_index (creator(5)) COMMENT '创建者前缀索引';
+ALTER TABLE book ADD INDEX bookname_prefix_index (book_name(5)) COMMENT '书名前缀索引';
+
+
+-- 配置全文索引结束词
+USE grrs;
+CREATE TABLE empty_stopword(value VARCHAR(30)) ENGINE = InnoDB;
+SET GLOBAL innodb_ft_server_stopword_table = 'grrs/empty_stopword';
+ALTER TABLE book ADD FULLTEXT bookname_authors_fulltext (book_name, authors) COMMENT '书名索引全文索引';

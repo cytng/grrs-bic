@@ -34,7 +34,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @Query(value = "SELECT * FROM book WHERE (creator = ?1 OR modifier = ?1) AND deleted = FALSE ORDER BY book_name", nativeQuery = true)
     List<Book> findAllByCreatorOrModifier(String creator);
 
-
     /**
      * 根据关键字搜索书籍
      * @param keyword

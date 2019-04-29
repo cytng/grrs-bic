@@ -24,7 +24,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()
-//                .formLogin().and().sessionManagement().invalidSessionUrl("/login.jsp")
             .authorizeRequests().anyRequest().permitAll();
     }
 

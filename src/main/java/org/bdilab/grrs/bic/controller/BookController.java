@@ -23,7 +23,7 @@ import java.util.List;
  */
 @Api(description = "书籍接口")
 @RestController
-@RequestMapping("/user")
+@RequestMapping(value = "/user")
 public class BookController {
 
     @Autowired
@@ -32,7 +32,6 @@ public class BookController {
     @ApiOperation(value = "添加书籍", response = ResponseEntity.class, notes = "参数有误，返回406；库中存在同名书籍，返回202和书籍列表；添加成功，返回200")
     @RequestMapping(value = "/addBook", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity addBook(UserInfo curUser, @RequestBody BookInfo bookInfo) {
-//        UserInfo curUser = (UserInfo) session.getAttribute(UserUtil.CUR_USER);
         if (BookUtil.isIllegalInfo(bookInfo)) {
             return ResponseResultUtil.wrongParameters();
         }
