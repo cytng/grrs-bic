@@ -24,7 +24,9 @@ import static java.util.regex.Pattern.*;
 public class ImportUtil {
 
     public static void main(String[] args) {
-        System.out.println(importFromExcel(new File(args[0]), args[1]));
+        if (args.length > 1) {
+            System.out.println(importFromExcel(new File(args[0]), args[1]));
+        }
     }
 
     private static String importFromExcel(File excelFile, String sheetName) {
@@ -188,7 +190,7 @@ public class ImportUtil {
                 builder.append(",");
             }
             builder.deleteCharAt(builder.length() - 1);
-            builder.append(") values('system','system',");
+            builder.append(") values('admin','admin',");
             for (Object value: kv.values()) {
                 if (value instanceof String) {
                     builder.append("'");
